@@ -2,354 +2,353 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VideoVault</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>YanHH3D</title>
     <style>
-        :root {
-            --primary: #6366f1; --bg: #0f172a; --card: #1e293b; 
-            --text: #f8fafc; --sub: #94a3b8; --border: #334155; --danger: #ef4444;
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
-        [data-theme="light"] {
-            --bg: #f1f5f9; --card: #ffffff; --text: #0f172a; --sub: #64748b; --border: #cbd5e1;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-        body { background: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .app { width: 100%; max-width: 430px; height: 100vh; max-height: 880px; background: var(--bg); display: flex; flex-direction: column; position: relative; overflow: hidden; }
-        @media(min-width:431px) { .app { border-radius: 40px; border: 8px solid var(--border); } }
-        
-        header, .nav { display: flex; justify-content: space-between; align-items: center; background: var(--card); border-color: var(--border); z-index: 10; }
-        header { padding: 16px 20px; font-weight: bold; font-size: 1.2rem; }
-        header i { color: var(--primary); }
-        header button, .setting-right { background: none; border: none; color: var(--sub); cursor: pointer; font-size: 1.1rem; }
-        
-        .content { flex: 1; overflow-y: auto; padding: 16px 20px 80px; }
-        .view { display: none; } .view.active { display: block; }
-        
-        .search input { width: 100%; padding: 10px 16px 10px 38px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; color: var(--text); outline: none; margin-bottom: 16px; }
-        .search { position: relative; }
-        .search i { position: absolute; left: 14px; top: 12px; color: var(--sub); }
-        
-        .banner { background: linear-gradient(135deg, #4f46e5, #3b82f6); border-radius: 16px; padding: 16px; color: white; display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-        .banner h2 { font-size: 1.4rem; margin-top: 4px; }
-        
-        .list { display: flex; flex-direction: column; gap: 10px; }
-        .item { background: var(--card); border: 1px solid var(--border); border-radius: 12px; display: flex; align-items: center; padding: 10px; gap: 12px; cursor: pointer; transition: 0.2s; }
-        .item:hover { border-color: var(--primary); }
-        .thumb { width: 70px; height: 50px; background: #000; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--primary); }
-        .details { flex: 1; overflow: hidden; }
-        .name { font-size: 0.9rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; }
-        .sub { font-size: 0.75rem; color: var(--sub); }
-        .item-actions { display: flex; gap: 6px; align-items: center; }
-        .action-btn { background: none; border: none; color: var(--sub); padding: 8px; cursor: pointer; border-radius: 6px; transition: 0.2s; }
-        .action-btn:hover { color: var(--primary); background: rgba(99,102,241,0.1); }
-        
-        .group { background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; margin-bottom: 16px; }
-        .s-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-bottom: 1px solid var(--border); cursor: pointer; font-size: 0.95rem; color: var(--text); }
-        .s-item:last-child { border-bottom: none; }
-        .s-left { display: flex; align-items: center; gap: 12px; color: var(--text); }
-        .s-left i { color: var(--primary); width: 20px; text-align: center; }
-        .s-info { display: flex; flex-direction: column; gap: 2px; }
-        .s-desc { font-size: 0.75rem; color: var(--sub); }
-        
-        /* Switch */
-        .switch { position: relative; display: inline-block; width: 40px; height: 22px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: var(--border); transition: .3s; border-radius: 22px; }
-        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background: white; transition: .3s; border-radius: 50%; }
-        input:checked + .slider { background: var(--primary); }
-        input:checked + .slider:before { transform: translateX(18px); }
-        
-        .nav { position: absolute; bottom: 0; left: 0; width: 100%; height: 65px; border-top: 1px solid var(--border); justify-content: space-around; }
-        .nav-btn { background: none; border: none; color: var(--sub); display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 0.7rem; cursor: pointer; flex: 1; }
-        .nav-btn.active { color: var(--primary); }
-        .nav-btn i { font-size: 1.2rem; }
-        .fab { background: var(--primary); color: white; width: 48px; height: 48px; border-radius: 50%; border: none; font-size: 1.25rem; cursor: pointer; margin-top: -15px; box-shadow: 0 4px 12px rgba(99,102,241,0.4); }
-        
-        .empty { text-align: center; padding: 40px; color: var(--sub); }
 
-        /* Modal xem video */
-        .modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 100; padding: 20px; }
-        .modal.active { display: flex; }
-        .modal video { width: 100%; max-height: 70vh; border-radius: 12px; background: #000; outline: none; }
-        .close-modal { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.2); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; }
+        html, body, .iframe-container, iframe {
+            -ms-overflow-style: none !important;
+            scrollbar-width: none !important;
+        }
+        
+        html::-webkit-scrollbar, 
+        body::-webkit-scrollbar, 
+        .iframe-container::-webkit-scrollbar, 
+        iframe::-webkit-scrollbar {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+        }
+
+        html, body {
+            width: 100%;
+            max-width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            background: #000;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        :fullscreen .url-bar, :-webkit-full-screen .url-bar {
+            display: none !important;
+        }
+
+        .backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 999998;
+            display: none;
+            background: transparent;
+        }
+
+        .backdrop.active {
+            display: block;
+        }
+
+        .url-bar {
+            width: 60px;
+            height: 60px;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            gap: 6px;
+            z-index: 999999;
+            position: absolute;
+            top: 0;
+            right: 0;
+            cursor: pointer;
+            pointer-events: auto;
+            transition: width 0.15s cubic-bezier(0, 0, 0.2, 1), height 0.15s cubic-bezier(0, 0, 0.2, 1);
+            will-change: width, height;
+        }
+
+        .url-bar.active-mode {
+            width: 100%;
+            height: 48px;
+            background: #121212;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 0 8px;
+            cursor: default;
+        }
+
+        .url-bar input {
+            width: 0;
+            opacity: 0;
+            pointer-events: none;
+            height: 34px;
+            padding: 0;
+            border-radius: 17px;
+            border: none;
+            background: #1e1e1e;
+            color: #fff !important;
+            font-size: 13px;
+            outline: none;
+            -webkit-user-select: text;
+            user-select: text;
+            transition: opacity 0.15s ease;
+        }
+
+        .url-bar.active-mode input {
+            flex: 1;
+            width: auto;
+            opacity: 1;
+            pointer-events: auto;
+            padding: 0 12px;
+            border: 1px solid #2a2a2a;
+        }
+
+        .url-bar input:focus {
+            border-color: #007aff;
+            background: #181818;
+        }
+
+        .btn-icon {
+            height: 34px;
+            width: 34px;
+            border-radius: 17px;
+            border: none;
+            background: #2a2a2a;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            display: none;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .btn-icon.set-btn {
+            background: #34c759;
+        }
+
+        .url-bar.active-mode .btn-icon.set-btn {
+            display: flex;
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .btn-icon svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+            pointer-events: none;
+        }
+
+        .iframe-container {
+            flex: 1;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            position: relative;
+            overflow: hidden;
+            -webkit-overflow-scrolling: touch;
+            z-index: 1;
+        }
+
+        iframe {
+            width: calc(100% + 20px) !important;
+            height: 100% !important;
+            border: none;
+            display: block;
+            will-change: transform;
+            transform: translate3d(0, 0, 0);
+            -webkit-user-select: text !important;
+            user-select: text !important;
+        }
     </style>
 </head>
 <body>
+    <div class="backdrop" id="backdrop"></div>
 
-    <div class="app">
-        <header>
-            <span id="title"><i class="fa-solid fa-clapperboard"></i> VideoVault</span>
-            <button onclick="clearAll()" title="Xóa tất cả"><i class="fa-solid fa-trash-can"></i></button>
-        </header>
+    <div class="iframe-container" id="iframe-container">
+        <iframe id="main-iframe" src="https://yanhh3d.ee" title="Website" loading="eager" 
+            allow="autoplay; encrypted-media; fullscreen; picture-in-picture" 
+            allowfullscreen 
+            webkitallowfullscreen 
+            mozallowfullscreen
+            sandbox="allow-scripts allow-same-origin allow-forms">
+        </iframe>
+    </div>
 
-        <div class="content">
-            <!-- Trang Chủ -->
-            <div id="home" class="view active">
-                <div class="search">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" id="search" placeholder="Tìm kiếm video..." oninput="render()">
-                </div>
-                <div class="banner">
-                    <div><small>Tổng kho</small><h2 id="count">0 video</h2></div>
-                    <i class="fa-solid fa-vault" style="font-size: 2rem; opacity: 0.8;"></i>
-                </div>
-                <div class="list" id="list"></div>
-            </div>
-
-            <!-- Cài Đặt -->
-            <div id="settings" class="view">
-                <h3 style="margin-bottom: 10px; font-size: 1rem; color: var(--text);">Giao diện</h3>
-                <div class="group">
-                    <div class="s-item">
-                        <div class="s-left">
-                            <i class="fa-solid fa-moon"></i>
-                            <div class="s-info">
-                                <span>Chế độ sáng/tối</span>
-                                <span class="s-desc">Thay đổi giao diện ứng dụng</span>
-                            </div>
-                        </div>
-                        <label class="switch"><input type="checkbox" id="themeToggle" onchange="toggleTheme()"><span class="slider"></span></label>
-                    </div>
-                </div>
-
-                <h3 style="margin-bottom: 10px; font-size: 1rem; color: var(--text);">Dữ liệu</h3>
-                <div class="group">
-                    <div class="s-item">
-                        <div class="s-left">
-                            <i class="fa-solid fa-hard-drive"></i>
-                            <div class="s-info">
-                                <span>Trạng thái cơ sở dữ liệu</span>
-                                <span class="s-desc">Sử dụng IndexedDB tối ưu</span>
-                            </div>
-                        </div>
-                        <span class="setting-right" style="color: var(--primary); font-size: 0.85rem;">Ổn định</span>
-                    </div>
-                </div>
-
-                <h3 style="margin-bottom: 10px; font-size: 1rem; color: var(--text);">Thông tin</h3>
-                <div class="group">
-                    <div class="s-item">
-                        <div class="s-left">
-                            <i class="fa-solid fa-circle-info"></i>
-                            <div class="s-info">
-                                <span>Phiên bản</span>
-                                <span class="s-desc">VideoVault v1.2.2 (Fixed Crash)</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <input type="file" id="file" accept="video/*" style="display:none" onchange="addVideo(event)">
-
-        <!-- Modal Phát Video -->
-        <div class="modal" id="videoModal">
-            <button class="close-modal" onclick="closeVideo()"><i class="fa-solid fa-xmark"></i></button>
-            <video id="videoPlayer" controls></video>
-        </div>
-
-        <div class="nav">
-            <button class="nav-btn active" id="btnHome" onclick="tab('home')"><i class="fa-solid fa-house"></i><span>Trang chủ</span></button>
-            <button class="fab" onclick="document.getElementById('file').click()"><i class="fa-solid fa-plus"></i></button>
-            <button class="nav-btn" id="btnSettings" onclick="tab('settings')"><i class="fa-solid fa-gear"></i><span>Cài đặt</span></button>
-        </div>
+    <div class="url-bar" id="url-bar" title="Bấm góc trên bên phải để nhập link">
+        <input type="text" id="link-input" value="" placeholder="Nhập link hoặc từ khóa..." autocomplete="off" spellcheck="false">
+        <button class="btn-icon set-btn" id="set-btn" title="Lưu làm link mặc định (Set Web)">
+            <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l2 2h5a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2zm-6-11h-2v3H8l4 4 4-4h-3v-3z"/></svg>
+        </button>
     </div>
 
     <script>
-        let db;
-        const dbName = "VideoVaultDB";
-        const storeName = "videos";
-
-        // Khôi phục giao diện từ localStorage ngay khi tải trang
-        (function() {
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'light') {
-                document.documentElement.setAttribute('data-theme', 'light');
-                window.addEventListener('DOMContentLoaded', () => {
-                    const toggle = document.getElementById('themeToggle');
-                    if(toggle) toggle.checked = true;
-                });
+        window.open = function() { return null; };
+        document.addEventListener('click', function(e) {
+            let target = e.target.closest('a');
+            if (target && (target.target === '_blank' || target.target === '_top' || target.target === '_parent')) {
+                target.target = '_self';
             }
-        })();
+        }, true);
 
-        // Khởi tạo IndexedDB an toàn
-        function initDB() {
-            const request = indexedDB.open(dbName, 1);
-            request.onerror = () => {
-                console.error("Không thể mở cơ sở dữ liệu trình duyệt!");
-            };
-            request.onsuccess = (e) => {
-                db = e.target.result;
-                render();
-            };
-            request.onupgradeneeded = (e) => {
-                const database = e.target.result;
-                if (!database.objectStoreNames.contains(storeName)) {
-                    database.createObjectStore(storeName, { keyPath: "id" });
+        const HARDCODED_LINK = 'https://yanhh3d.ee';
+        const $ = id => document.getElementById(id);
+        const input = $('link-input'), iframe = $('main-iframe'), urlBar = $('url-bar'), backdrop = $('backdrop');
+
+        function stripProtocol(url) {
+            return url.replace(/^https?:\/\//i, '');
+        }
+
+        function getCustomHome() {
+            return localStorage.getItem('custom_main_link') || HARDCODED_LINK;
+        }
+
+        function closeUrlBar() {
+            urlBar.classList.remove('active-mode');
+            backdrop.classList.remove('active');
+            input.blur();
+        }
+
+        function openUrlBar(e) {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            urlBar.classList.add('active-mode');
+            backdrop.classList.add('active');
+            requestAnimationFrame(() => {
+                setTimeout(() => input.focus(), 50);
+            });
+        }
+
+        function setIframeSrc(url) {
+            closeUrlBar();
+            requestAnimationFrame(() => {
+                if (iframe.src !== url) {
+                    iframe.src = url;
                 }
-            };
-        }
-        initDB();
-
-        function tab(t) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(t).classList.add('active');
-            document.getElementById(t === 'home' ? 'btnHome' : 'btnSettings').classList.add('active');
-            document.getElementById('title').innerHTML = t === 'home' ? '<i class="fa-solid fa-clapperboard"></i> VideoVault' : '<i class="fa-solid fa-gear"></i> Cài đặt';
+            });
         }
 
-        function addVideo(e) {
-            const f = e.target.files[0]; 
-            if(!f) return;
-            
-            if(!db) {
-                alert("Cơ sở dữ liệu chưa sẵn sàng, vui lòng thử lại sau giây lát.");
+        function loadHome() {
+            const homeUrl = getCustomHome();
+            input.value = stripProtocol(homeUrl);
+            setIframeSrc(homeUrl);
+        }
+
+        document.addEventListener('DOMContentLoaded', loadHome);
+
+        function navigate() {
+            let val = input.value.trim();
+            if (!val) {
+                loadHome();
                 return;
             }
-
-            try {
-                const transaction = db.transaction([storeName], "readwrite");
-                const store = transaction.objectStore(storeName);
-                
-                const videoObj = {
-                    id: Date.now(),
-                    title: f.name,
-                    size: (f.size / (1024 * 1024)).toFixed(1) + ' MB',
-                    date: new Date().toLocaleDateString('vi-VN'),
-                    blob: f 
-                };
-
-                const request = store.add(videoObj);
-                request.onsuccess = () => {
-                    e.target.value = '';
-                    render();
-                    tab('home');
-                };
-                request.onerror = (err) => {
-                    console.error(err);
-                    alert("Lỗi: File quá lớn hoặc bộ nhớ trình duyệt bị giới hạn!");
-                };
-            } catch (ex) {
-                console.error(ex);
-                alert("Không thể lưu trữ tệp video có dung lượng quá lớn trong môi trường này.");
+            
+            let targetUrl = val;
+            if (/^https?:\/\//i.test(val) || (val.includes('.') && !val.includes(' '))) {
+                if (!/^https?:\/\//i.test(val)) targetUrl = 'https://' + val;
+                input.value = stripProtocol(targetUrl);
+                setIframeSrc(targetUrl);
+            } else {
+                targetUrl = `https://www.google.com/search?q=${encodeURIComponent(val)}&igu=1`;
+                input.value = val;
+                setIframeSrc(targetUrl);
             }
         }
 
-        function render() {
-            if (!db) return;
-            try {
-                const keyword = document.getElementById('search').value.toLowerCase();
-                const transaction = db.transaction([storeName], "readonly");
-                const store = transaction.objectStore(storeName);
-                const request = store.getAll();
-
-                request.onsuccess = () => {
-                    let list = request.result.reverse();
-                    if (keyword) {
-                        list = list.filter(v => v.title.toLowerCase().includes(keyword));
-                    }
-                    const countEl = document.getElementById('count');
-                    if(countEl) countEl.innerText = `${list.length} video`;
-                    
-                    const el = document.getElementById('list');
-                    if(!el) return;
-
-                    if(!list.length) { 
-                        el.innerHTML = `<div class="empty"><i class="fa-solid fa-video-slash" style="font-size:2.5rem;margin-bottom:8px"></i><p>Kho trống, bấm dấu (+) để thêm</p></div>`; 
-                        return; 
-                    }
-                    
-                    el.innerHTML = list.map(v => `
-                        <div class="item" onclick="playVideo(${v.id})">
-                            <div class="thumb"><i class="fa-solid fa-play"></i></div>
-                            <div class="details">
-                                <div class="name" title="${v.title}">${v.title}</div>
-                                <div class="sub"><span>${v.size}</span> • <span>${v.date}</span></div>
-                            </div>
-                            <div class="item-actions">
-                                <button class="action-btn" onclick="downloadVideo(${v.id}, event)" title="Tải video xuống"><i class="fa-solid fa-download"></i></button>
-                                <button class="action-btn" onclick="del(${v.id}, event)" title="Xóa video"><i class="fa-solid fa-xmark"></i></button>
-                            </div>
-                        </div>
-                    `).join('');
-                };
-            } catch (err) {
-                console.error("Lỗi khi render danh sách:", err);
+        let touchStarted = false;
+        urlBar.addEventListener('touchstart', function(e) {
+            touchStarted = true;
+            if (!urlBar.classList.contains('active-mode')) {
+                openUrlBar(e);
             }
-        }
+        }, {passive: false});
 
-        function playVideo(id) {
-            const transaction = db.transaction([storeName], "readonly");
-            const store = transaction.objectStore(storeName);
-            const request = store.get(id);
-            request.onsuccess = () => {
-                const v = request.result;
-                if (v && v.blob) {
-                    const modal = document.getElementById('videoModal');
-                    const player = document.getElementById('videoPlayer');
-                    player.src = URL.createObjectURL(v.blob);
-                    modal.classList.add('active');
-                    player.play().catch(e => console.log("Auto-play blocked:", e));
+        urlBar.addEventListener('click', function(e) {
+            if (touchStarted) {
+                touchStarted = false;
+                return;
+            }
+            if (!urlBar.classList.contains('active-mode')) {
+                openUrlBar(e);
+            }
+        });
+
+        backdrop.addEventListener('touchstart', closeUrlBar, {passive: true});
+        backdrop.addEventListener('click', closeUrlBar);
+
+        $('set-btn').onclick = (e) => {
+            e.stopPropagation();
+            let val = input.value.trim();
+            let fullUrl = val || stripProtocol(getCustomHome());
+
+            if (val && !/^https?:\/\//i.test(val) && val.includes('.')) {
+                fullUrl = 'https://' + val;
+            } else if (!/^https?:\/\//i.test(fullUrl)) {
+                fullUrl = 'https://' + fullUrl;
+            }
+
+            localStorage.setItem('custom_main_link', fullUrl);
+            loadHome();
+        };
+
+        input.onkeypress = function(e) {
+            if (e.key === 'Enter') {
+                navigate();
+            }
+        };
+
+        const handleFullscreenOrientation = () => {
+            const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement;
+            if (isFullscreen && screen.orientation && screen.orientation.lock) {
+                screen.orientation.lock('landscape').catch(() => {});
+            } else if (!isFullscreen && screen.orientation && screen.orientation.unlock) {
+                screen.orientation.unlock();
+            }
+        };
+
+        document.addEventListener('fullscreenchange', handleFullscreenOrientation);
+        document.addEventListener('webkitfullscreenchange', handleFullscreenOrientation);
+
+        let wakeLock = null;
+        const requestWakeLock = async () => {
+            if ('wakeLock' in navigator) {
+                try {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                    wakeLock.addEventListener('release', () => {
+                        wakeLock = null;
+                    });
+                } catch (err) {
+                    console.log('Wake Lock error:', err);
                 }
-            };
-        }
-
-        function closeVideo() {
-            const modal = document.getElementById('videoModal');
-            const player = document.getElementById('videoPlayer');
-            player.pause();
-            if(player.src) {
-                URL.revokeObjectURL(player.src);
-                player.src = '';
             }
-            modal.classList.remove('active');
-        }
+        };
 
-        function downloadVideo(id, event) {
-            event.stopPropagation();
-            const transaction = db.transaction([storeName], "readonly");
-            const store = transaction.objectStore(storeName);
-            const request = store.get(id);
-            request.onsuccess = () => {
-                const v = request.result;
-                if (v && v.blob) {
-                    const url = URL.createObjectURL(v.blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = v.title;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    setTimeout(() => URL.revokeObjectURL(url), 1000);
-                }
-            };
-        }
-
-        function del(id, event) {
-            event.stopPropagation();
-            if(confirm('Bạn có muốn xóa video này không?')) {
-                const transaction = db.transaction([storeName], "readwrite");
-                const store = transaction.objectStore(storeName);
-                store.delete(id).onsuccess = () => render();
+        document.addEventListener('DOMContentLoaded', requestWakeLock);
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                requestWakeLock();
             }
-        }
-
-        function clearAll() { 
-            if(confirm('Xóa sạch tất cả video?')) { 
-                const transaction = db.transaction([storeName], "readwrite");
-                const store = transaction.objectStore(storeName);
-                store.clear().onsuccess = () => render();
-            } 
-        }
-
-        function toggleTheme() {
-            const isLight = document.getElementById('themeToggle').checked;
-            document.documentElement.setAttribute('data-theme', isLight ? 'light' : '');
-            localStorage.setItem('theme', isLight ? 'light' : 'dark');
-        }
+        });
+        
+        ['click', 'touchstart'].forEach(evt => {
+            document.addEventListener(evt, () => {
+                if (!wakeLock) requestWakeLock();
+            }, {passive: true});
+        });
     </script>
 </body>
 </html>
